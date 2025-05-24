@@ -1,23 +1,20 @@
 module "eks" {
   source  = "terraform-aws-modules/eks/aws"
-  version = "19.21.0"  
+  version = "19.21.0"
 
   cluster_name    = "delta-cluster"
   cluster_version = "1.27"
+  vpc_id          = module.vpc.vpc_id
+  subnet_ids      = module.vpc.private_subnets  
+  enable_irsa     = true
 
-  subnets = module.vpc.private_subnets
-  vpc_id  = module.vpc.vpc_id
-
-  enable_irsa = true
-
-  node_groups = {
+  eks_managed_node_groups = {
     general = {
-      desired_capacity = 3
-      max_capacity     = 3
-      min_capacity     = 1
+      min_size     = 1
+      max_size     = 3
+      desired_size = 3
 
-      instance_types = ["t3.large"]  
+      instance_types = ["t3.large"]
     }
   }
 }
-
